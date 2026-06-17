@@ -10,21 +10,14 @@ finish-args:
   - --socket=wayland
   - --socket=fallback-x11
   - --share=ipc
-  # GPU acceleration for the webview
+  # GPU acceleration for the WebKitGTK webview
   - --device=dri
-  # Network: license activation, sending invoices/estimates by email (SMTP),
-  # in-app purchase/upgrade links, and update checks.
+  # Outbound network is required for two features that cannot use a portal:
+  #   * License activation / verification — HTTPS requests to the license server
+  #     (api.indomitusgroup.com) via reqwest.
+  #   * Sending invoices and estimates by email — a direct SMTP connection to the
+  #     user's own configured mail server via lettre.
   - --share=network
-  # Save/open backups, CSV imports/exports, and PDF invoices. Arbitrary file
-  # picks (e.g. receipt attachments) go through the file-chooser portal and do
-  # not need extra permissions.
-  - --filesystem=xdg-documents
-  - --filesystem=xdg-download
-
-# NOTE: Receipt OCR shells out to the system `tesseract` binary and degrades
-# gracefully when it is absent (the rest of the app is unaffected). To enable
-# OCR inside the sandbox, add the leptonica + tesseract + tessdata-eng modules
-# documented in flatpak/README.md before the `indiaccounting` module below.
 
 modules:
   - name: indiaccounting
@@ -39,7 +32,6 @@ modules:
       - install -Dm644 icons/512x512.png ${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/com.indomitusgroup.indiaccounting.png
     sources:
       - type: archive
-        # TODO before submission: build the release, run flatpak/preparerelease.sh,
-        # upload the tarball, and paste its real URL + sha256 here.
         url: https://downloads.indomitusgroup.com/indiaccounting/indiaccounting-1.0.0-linux-x86_64.tar.gz
-        sha256: 09580d433341faa310fdfad4dffcd29ceb9e9eff9bebdcde2d181164b9410dae
+        sha256: ea3c055416ea3e331097f1b5088feeede9bb65b9700dff490c1400ea88839508
+
